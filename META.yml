@@ -1,0 +1,106 @@
+---
+name: Verby
+version: 0.01
+author:
+  - Stevan Little <stevan@iinteractive.com>
+  - Yuval Kogman <nothingmuch@woobling.org>
+abstract: |-
+  Takes steps and executes them. Sort of like what make(1) is to a
+  Makefile.
+license: perl
+requires:
+  Algorithm::Dependency::Objects: 0
+  Devel::Caller::Perl: 0
+  List::MoreUtils: 0
+  Log::Log4perl: 0
+  Set::Object: 0
+  UNIVERSAL::require: 0
+  perl: >= 5.008
+build_requires:
+  File::Temp: 0
+  Hash::AsObject: 0
+  Test::Deep: 0
+  Test::Exception: 0
+  Test::MockObject: 0
+  Test::More: 0
+  Test::Plan: 0
+provides:
+  Log::Log4perl::Layout::SimpleLayout::Multiline:
+    file: lib/Log/Log4perl/Layout/SimpleLayout/Multiline.pm
+    version: 0.01
+  Verby:
+    file: lib/Verby.pm
+    version: 0.01
+  Verby::Action:
+    file: lib/Verby/Action.pm
+    version: 0.01
+  Verby::Action::Copy:
+    file: lib/Verby/Action/Copy.pm
+    version: 0.01
+  Verby::Action::Make:
+    file: lib/Verby/Action/Make.pm
+    version: 0.01
+  Verby::Action::MakefilePL:
+    file: lib/Verby/Action/MakefilePL.pm
+    version: 0.01
+  Verby::Action::MkPath:
+    file: lib/Verby/Action/MkPath.pm
+    version: 0.01
+  Verby::Action::Mysql::CreateTable:
+    file: lib/Verby/Action/Mysql/CreateTable.pm
+    version: 0.01
+  Verby::Action::Mysql::DoSql:
+    file: lib/Verby/Action/Mysql/DoSql.pm
+    version: 0.01
+  Verby::Action::Mysql::LoadDataFile:
+    file: lib/Verby/Action/Mysql/LoadDataFile.pm
+    version: 0.01
+  Verby::Action::Mysql::Util:
+    file: lib/Verby/Action/Mysql/Util.pm
+    version: 0.01
+  Verby::Action::MysqlCreateDB:
+    file: lib/Verby/Action/MysqlCreateDB.pm
+    version: 0.01
+  Verby::Action::RunCmd:
+    file: lib/Verby/Action/RunCmd.pm
+    version: 0.01
+  Verby::Action::Stub:
+    file: lib/Verby/Action/Stub.pm
+    version: 0.01
+  Verby::Action::Template:
+    file: lib/Verby/Action/Template.pm
+    version: 0.01
+  Verby::Action::Untar:
+    file: lib/Verby/Action/Untar.pm
+    version: 0.01
+  Verby::Config::Data:
+    file: lib/Verby/Config/Data.pm
+    version: 0.01
+  Verby::Config::Data::Mutable:
+    file: lib/Verby/Config/Data/Mutable.pm
+    version: 0.01
+  Verby::Config::Hub:
+    file: lib/Verby/Config/Hub.pm
+    version: 0.01
+  Verby::Config::Source:
+    file: lib/Verby/Config/Source.pm
+    version: 0.01
+  Verby::Config::Source::ARGV:
+    file: lib/Verby/Config/Source/ARGV.pm
+    version: 0.01
+  Verby::Config::Source::Prompt:
+    file: lib/Verby/Config/Source/Prompt.pm
+    version: 0.01
+  Verby::Context:
+    file: lib/Verby/Context.pm
+    version: 0.01
+  Verby::Dispatcher:
+    file: lib/Verby/Dispatcher.pm
+    version: 0.01
+  Verby::Step:
+    file: lib/Verby/Step.pm
+    version: 0.01
+  Verby::Step::Closure:
+    file: lib/Verby/Step/Closure.pm
+    version: 0.01
+generated_by: Module::Build version 0.261

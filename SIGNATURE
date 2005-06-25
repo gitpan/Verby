@@ -1,0 +1,74 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.44.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 7c5c3d41c40efe5b6ea51804d5756a1d1be341a5 Build.PL
+SHA1 bd740a0d6a08899b52510f337c9c8ddd17d55abf Changes
+SHA1 e283c21458a7867cf361fdc054e3ce8485defbf3 MANIFEST
+SHA1 fc24cfc487482759a6e00ea4aaa81c341615ba30 META.yml
+SHA1 e108d6af02a18daba68a634992bc60668201d98b Makefile.PL
+SHA1 0a38ba64a622cec3da81cc36e97405f016331e2e README
+SHA1 cb895ac91684f4ec093e6371a41325c29bdf7b06 examples/module_builder.pl
+SHA1 a94672733c3fbb12047e9c95ff627ab1307cf625 examples/mysql_load.pl
+SHA1 ad39ff7b847ecf4aad849d7589ce8f9b614ba446 examples/template.pl
+SHA1 5607666b297c1fd21483acfd8727f8540a52767e lib/Log/Log4perl/Layout/SimpleLayout/Multiline.pm
+SHA1 7cbf81c8be74b1b3598f9752dd2085ea437ba0ac lib/Verby.pm
+SHA1 81d859f515c4dab531bdbd9af34b0b1cc922ca16 lib/Verby/Action.pm
+SHA1 af6d5762f692b919a03884c159b581ff68f6aa13 lib/Verby/Action/Copy.pm
+SHA1 2b23420f79e3b0ffaabfe2dab50f45725e1cd41b lib/Verby/Action/Make.pm
+SHA1 fc2e1e2631517a5d6ff358fe6d2df6d3a3921117 lib/Verby/Action/MakefilePL.pm
+SHA1 b927a3a0a351ad7f5930389ed763c100f9294f6c lib/Verby/Action/MkPath.pm
+SHA1 eed2ef52a36326625b2608be2b5d70b8a6caca72 lib/Verby/Action/Mysql/CreateTable.pm
+SHA1 c6b6e10aff3a59a2bf4d5575fbf68b6ab47220f5 lib/Verby/Action/Mysql/DoSql.pm
+SHA1 03a20cca967d3a4965fc1fb61d54e7fd903e99d9 lib/Verby/Action/Mysql/LoadDataFile.pm
+SHA1 4e474238b3b27fea5d2133612c545f5cd3ea1d59 lib/Verby/Action/Mysql/Util.pm
+SHA1 43f13f77e961ec12a8175b684f9e16a8d54f94c3 lib/Verby/Action/MysqlCreateDB.pm
+SHA1 d15c329fbc39a2ee5ad06a1f7297526daf308f30 lib/Verby/Action/RunCmd.pm
+SHA1 9fb2b0cf7e9b153e673eec0b31cb0a258fe2e974 lib/Verby/Action/Stub.pm
+SHA1 405835195a8681a98cb09f801538ff85bdd7afa8 lib/Verby/Action/Template.pm
+SHA1 fb6a7cc11441b724009279682b814e8cb760188d lib/Verby/Action/Untar.pm
+SHA1 a9f0b965d812d6ce34d6dfac6d245a41a9d026cb lib/Verby/Config/Data.pm
+SHA1 664864c5e8496553f5b1da61b9dc8b89e8d3000e lib/Verby/Config/Data/Mutable.pm
+SHA1 08e776b853d9f367b0a545362c732de7c0a771b9 lib/Verby/Config/Hub.pm
+SHA1 ac4985f5d93e59f865e5f7ebf74a78c482fe91ae lib/Verby/Config/Source.pm
+SHA1 3df176b18b583bacd090712f636290a19f92188b lib/Verby/Config/Source/ARGV.pm
+SHA1 9151bde50a4a40ee1cc090cdd45d0273ded44da2 lib/Verby/Config/Source/Prompt.pm
+SHA1 089912d83e60de4de9f9360f85025d981b1baece lib/Verby/Context.pm
+SHA1 b3093c44fcbdf32b36d445fe67dbf6f64e53eed7 lib/Verby/Dispatcher.pm
+SHA1 427cbc5aa4487203f348a0d1ab74775f6482b2c1 lib/Verby/Step.pm
+SHA1 feeb3a58ea1ed0b4ec1a9fc3b812f5547f456cc0 lib/Verby/Step/Closure.pm
+SHA1 05fc6cac06f2672dec69ff67452a2831ff39e795 lib/Verby/svn-commit.tmp
+SHA1 132268f113da5d97e0e79c291cc4efec46eb4ff4 t/00_dist.t
+SHA1 8dbbaf88a4f37355fbb1c9b18dde58affb135653 t/action.t
+SHA1 77d60a151a253e20c8038778cfe64d70dd96fc4a t/action_analyze_file.t
+SHA1 66303cbd261cf0203951e43b3e2fb4d6403964d4 t/action_mkpath.t
+SHA1 d897942f4306c4a2dd9b3c2393432e75b8661a70 t/action_mysql_createdb.t
+SHA1 832db8d694974f5e24cdac2ecc819663f3589ba6 t/action_mysql_loaddata.t
+SHA1 15a8b6b2e04c10901ef5af66d871fcaa39a06c1b t/action_runcmd.t
+SHA1 a0405aaf921303d89ef5a75fbfefcd2558c12cd6 t/action_template.t
+SHA1 004db8a74f5dfaab00db6e3e8d63f1734c091df7 t/config_data.t
+SHA1 6a143b6a637bcff00ba1928ad07a1bec8b1b24f2 t/config_data_mutable.t
+SHA1 5a8a32ee9d3701092cf4c346187e6c7a9deb0d75 t/dispatch_async.t
+SHA1 75ab58d8916c642740831d298013e2080d8509ad t/dispatch_async_stress.t
+SHA1 209e43422d14f1b8253b41cc28eba58bb370f871 t/dispatch_presatisfied.t
+SHA1 1f99520afa6a986b6335269965ab10f8e8734a3c t/dispatch_simple.t
+SHA1 cfa7d1d9f79a6c9a89161c57ffe1b19a6cd25d43 t/step_closure.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (Darwin)
+
+iD8DBQFCvcBuVCwRwOvSdBgRArMYAKCr7P3b5E4Y/lUTuv2aGajBdRBg4ACfZlbA
+PzYEhLiHIHKXEYbWrKwBMt8=
+=R3Md
+-----END PGP SIGNATURE-----
