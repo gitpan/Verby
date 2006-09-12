@@ -6,8 +6,6 @@ use base qw/Log::Log4perl::Layout::SimpleLayout/;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 sub render {
 	my $self = shift;
 	my $output = $self->SUPER::render(@_);
@@ -15,7 +13,7 @@ sub render {
 	$output =~ /([A-Z]+ - )/;
 
 	my $spaces = ' ' x length($1);
-	$output =~ s/(\r?\n|\r)(?!$)/$1$spaces\t/g;
+	$output =~ s/(\r?\n|\r)(?!$)/$1$spaces/g;
 
 	$output;
 }
@@ -28,7 +26,8 @@ __END__
 
 =head1 NAME
 
-Log::Log4perl::Layout::SimpleLayout::Multiline - 
+Log::Log4perl::Layout::SimpleLayout::Multiline - A subclass of SimpleLayout
+that looks nicer when there are new lines in messages.
 
 =head1 SYNOPSIS
 
@@ -38,11 +37,13 @@ Log::Log4perl::Layout::SimpleLayout::Multiline -
 
 =head1 BUGS
 
-None that we are aware of. Of course, if you find a bug, let us know, and we will be sure to fix it. 
+None that we are aware of. Of course, if you find a bug, let us know, and we
+will be sure to fix it. 
 
 =head1 CODE COVERAGE
 
-We use B<Devel::Cover> to test the code coverage of the tests, please refer to COVERAGE section of the L<Verby> module for more information.
+We use B<Devel::Cover> to test the code coverage of the tests, please refer to
+COVERAGE section of the L<Verby> module for more information.
 
 =head1 SEE ALSO
 
@@ -52,7 +53,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

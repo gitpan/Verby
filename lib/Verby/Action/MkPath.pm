@@ -1,12 +1,9 @@
 #!/usr/bin/perl
 
 package Verby::Action::MkPath;
-use base qw/Verby::Action/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+with qw/Verby::Action/;
 
 use File::Path qw/mkpath/;
 
@@ -16,7 +13,12 @@ sub do {
 
 	my $path = $c->path;
 
+	if ( !defined($path) || !length($path) ){
+		$c->logger->logdie("invalid path");
+	}
+
 	$c->logger->info("creating path '$path'");
+
 	mkpath($path)
 		or $c->logger->logdie("couldn't mkpath('$path'): $!");
 
@@ -43,6 +45,7 @@ Verby::Action::MkPath - Action to create a directory path
 =head1 SYNOPSIS
 
 	use Verby::Step::Closure qw/step/;
+
 	step "Verby::Action::MkPath" => sub {
 		my ($self, $c) = @_;
 		$c->path("/some/path/that/will/be/created");
@@ -58,7 +61,11 @@ This Action uses L<File::Path/mkpath> to create a directory path.
 
 =item B<do>
 
+Creates the directory C<< $c->path >>.
+
 =item B<verfiy>
+
+Ensures that the directory C<< $c->path >> exists.
 
 =back
 
@@ -78,7 +85,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -1,12 +1,9 @@
 #!t/usr/bin/perl
 
 package Verby::Action::Mysql::LoadDataFile;
-use base qw/Verby::Action::Mysql::DoSql/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+extends qw/Verby::Action::Mysql::DoSql/;
 
 use Verby::Action::Mysql::Util;
 use Time::Piece;
@@ -15,15 +12,14 @@ use File::stat;
 use DBI;
 
 sub do_sql {
-	my $self = shift;
-	my $c = shift;
+	my ( $self, $c ) = @_;
 
-	my $dbh = $c->dbh;
+	my $dbh        = $c->dbh;
 	my $table_name = $c->table;
-	my $file = $c->file;
+	my $file       = $c->file;
 
-	my $fs = $c->field_sep;
-	my $ls = $c->line_sep;
+	my $fs   = $c->field_sep;
+	my $ls   = $c->line_sep;
 	my $skip = $c->skip_lines || 0;
 
 	$c->logger->info("Deleting all records from table '$table_name'");
@@ -48,15 +44,12 @@ sub do_sql {
 				};
 				my $sth = $dbh->prepare(qq{
 					LOAD DATA
-						$local INFILE ?
+						$local INFILE } . $dbh->quote($file) . qq{
 						INTO TABLE $table_name
-						FIELDS TERMINATED BY ?
-						LINES TERMINATED BY ?
-						IGNORE ? LINES
+						FIELDS TERMINATED BY } . $dbh->quote($fs) . qq{
+						LINES TERMINATED BY } . $dbh->quote($ls) . qq{
+						IGNORE $skip LINES
 				});
-				my $i;
-				$sth->bind_param(++$i, $_) for ($file, $fs, $ls);
-				$sth->bind_param(++$i, $skip, DBI::SQL_INTEGER);
 				$sth->execute;
 			}){
 				$c->logger->info("Successfully loaded '$file', local=" . ($local ? 1 : 0));
@@ -108,7 +101,8 @@ __END__
 
 =head1 NAME
 
-Verby::Action::Mysql::LoadDataFile - Action to validate and import data into a MySQL table
+Verby::Action::Mysql::LoadDataFile - Action to validate and import data into a
+MySQL table.
 
 =head1 SYNOPSIS
 
@@ -142,7 +136,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

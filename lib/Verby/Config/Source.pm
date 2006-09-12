@@ -1,23 +1,25 @@
 #!/usr/bin/perl
 
 package Verby::Config::Source;
-use base qw/Verby::Config::Data/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+extends qw/Verby::Config::Data/;
 
 use Tie::Memoize;
 
-sub new {
-	my $pkg = shift;
+use Scalar::Util ();
 
-	my $self;
-	tie my %data, 'Tie::Memoize', sub { $self->get_key(shift) };
-
-	$self = bless { data => \%data }, $pkg;
-}
+has data => (
+	isa => "HashRef",
+	is  => "ro",
+	lazy    => 1,
+	default => sub {
+		my $self = shift;
+		Scalar::Util::weaken($self); # closure leak otherwise		
+		tie my %data, 'Tie::Memoize', sub { $self->get_key(shift) };
+		return \%data,
+	},
+);
 
 sub get_key {
 	die "subclass should extract keys from real config source";
@@ -65,7 +67,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -18,7 +18,7 @@ BEGIN { plan tests => 16,
 	need_module("Sub::Override");
 }
 
-my $m; BEGIN { use_ok($m = "Verby::Action::MysqlCreateDB") }
+my $m; BEGIN { use_ok($m = "Verby::Action::Mysql::CreateDB") }
 
 my $dbh = DBI->connect("dbi:Mock:", {});
 

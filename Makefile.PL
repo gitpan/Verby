@@ -2,24 +2,26 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
-          'INSTALLDIRS' => 'site',
           'NAME' => 'Verby',
-          'VERSION_FROM' => 'lib/Verby/Dispatcher.pm',
+          'VERSION_FROM' => 'lib/Verby.pm',
           'PREREQ_PM' => {
-                           'Test::MockObject' => 0,
-                           'Test::Exception' => 0,
-                           'Algorithm::Dependency::Objects' => 0,
-                           'Test::More' => 0,
-                           'Hash::AsObject' => 0,
-                           'Test::Plan' => 0,
-                           'Set::Object' => 0,
-                           'File::Temp' => 0,
-                           'Devel::Caller::Perl' => 0,
-                           'UNIVERSAL::require' => 0,
-                           'Test::Deep' => 0,
-                           'List::MoreUtils' => 0,
-                           'Log::Log4perl' => 0
-                         }
+                           'Class::Inspector' => '0',
+                           'Devel::Caller::Perl' => '0',
+                           'File::Temp' => '0',
+                           'Hash::AsObject' => '0',
+                           'List::MoreUtils' => '0',
+                           'Log::Log4perl' => '0',
+                           'POE' => '0.37',
+                           'Set::Object' => '1.17',
+                           'Test::Deep' => '0',
+                           'Test::Exception' => '0',
+                           'Test::MockObject' => '0',
+                           'Test::More' => '0',
+                           'Test::Plan' => '0',
+                           'Test::use::ok' => '0'
+                         },
+          'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
+          'PL_FILES' => {}
         )
 ;

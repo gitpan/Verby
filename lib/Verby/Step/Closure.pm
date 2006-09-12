@@ -1,20 +1,19 @@
 #!/usr/bin/perl
 
 package Verby::Step::Closure;
-use base qw/Verby::Step/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+with qw/Verby::Step/;
 
 use overload '""' => 'stringify';
 
-use UNIVERSAL::require;
-use Scalar::Util qw/blessed/;
+use Class::Inspector;
 use Carp qw/croak/;
 
+use POE;
+
 # stevan hates Exporter, so this is not a bug ;-)
+# FIXME - use Sub::Exporter
 sub import {
     shift;            # remove pkg
     return unless @_; # dont export it if they dont ask
@@ -22,73 +21,37 @@ sub import {
     *{ (caller())[0] . "::step"} = \&step if $_[0] eq 'step';
 }
 
-# he also hates Class::Accessor, so don't tell him I left this in
-#__PACKAGE__->mk_accessors(qw/action depends pre post provides_cxt/);
-# shhh, don't tell Yuval I took out his Class::Accessor stuff
+sub depends {} # FIXME Moose::Role
+has depends => (
+	isa => "ArrayRef",
+	is  => "rw",
+	default    => sub { [] },
+	auto_deref => 1,
+);
 
-sub new {
-	my $pkg = shift;
-	my $pre = shift;
-	my $post = shift;
+has action => (
+	isa => "Object", # "Verby::Action",
+	is => "rw",
+);
 
-	my $self = bless {
-		depends => [],
-		pre => $pre,
-		post => $post,
-		action => undef,
-		provides_cxt => undef,
-	}, $pkg;
+has pre => (
+	isa => "CodeRef",
+	is  => "rw",
+);
 
-	$self;
-}
+has post => (
+	isa => "CodeRef",
+	is  => "rw",
+);
 
-sub depends {
-    my ($self, @depends) = @_;
-    $self->{depends} = [ @depends ] if scalar @depends;
-    @{$self->{depends}};
-}
-
-sub action {
-    my $self = shift;
-    $self->{action} = shift if @_;
-    $self->{action};
-}
-
-sub pre {
-    my $self = shift;
-    $self->{pre} = shift if @_;
-    $self->{pre};
-}
-
-sub post {
-    my $self = shift;
-    $self->{post} = shift if @_;
-    $self->{post};
-}
-
-sub provides_cxt {
-    my $self = shift;
-    $self->{provides_cxt} = shift if @_;
-    $self->{provides_cxt};
-}
+has provides_cxt => (
+	isa => "Bool",
+	is  => "rw",
+);
 
 sub add_deps {
 	my $self = shift;
-	$self->depends($self->depends, @_);
-}
-
-sub get {
-	my $self = shift;
-	my $rv = $self->SUPER::get(@_);
-
-	(ref $rv eq "ARRAY") ? @$rv : $rv;
-}
-
-sub set {
-	my $self = shift;
-	my $key = $_[0];
-
-	$self->SUPER::set(@_);
+	push @{ $self->depends }, @_;
 }
 
 sub is_satisfied {
@@ -101,64 +64,40 @@ sub do {
 	$self->_wrapped("do", @_);
 }
 
-sub start {
-	my $self = shift;
-	$self->_wrapped("start", @_);
-}
-
-sub finish {
-	my $self = shift;
-	$self->_wrapped("finish", @_);
-}
-
-sub pump {
-	my $self = shift;
-	$self->action->pump(@_);
-}
-
-sub can {
-	my $self = shift;
-	my $method = shift;
-
-	# only claim we can start/finish if our action can
-	if ($method eq "start" or $method eq "finish" or $method eq "pump"){
-		return $self->action->can($method);
-	} else {
-		return $self->SUPER::can($method);
-	}
-}
-
 sub _wrapped {
-	my $self = shift;
-	my $action_method = shift;
+	my ( $self, $action_method, @args ) = @_;
+	my ( $c, $poe ) = @args;
+
+	if (my $pre_hook = $self->pre){
+		$self->$pre_hook(@args);
+	}
 	
-	if ($action_method ne "finish" and my $sub = $self->pre){
-		$self->$sub(@_);
+	if (my $post_hook = $self->post){
+		my $heap = $poe_kernel->get_active_session->get_heap;
+
+		push @{ $heap->{post_hooks} }, sub { $self->$post_hook(@args) };
 	}
 
-	my $rv = $self->action->$action_method(@_);
-
-	if ($action_method ne "start" and my $post = $self->post){
-		$self->$post(@_);
-	}
-
-	$rv;
+	$self->action->$action_method(@args);
 }
 
 sub step ($;&&) {
-	my $action = shift;
-
-	my $step = Verby::Step::Closure->new(@_);
+	my ( $action, $pre, $post ) = @_;
 
 	unless (blessed $action){
-		unless ($action->can("new")){
-			$action->require
-				or die "Couldn't require $action: $UNIVERSAL::require::ERROR";
+		unless (Class::Inspector->loaded($action)) {
+            (my $file = "${action}.pm") =~ s{::}{/}g;
+            require $file;
 		}
+
 		$action = $action->new;
 	}
 
-	$step->action($action);
+	my $step = Verby::Step::Closure->new(
+		pre    => $pre,
+		post   => $post,
+		action => $action
+	);
 
 	$step;
 }
@@ -285,7 +224,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -1,21 +1,17 @@
 #!/usr/bin/perl
 
 package Verby::Action::Mysql::DoSql;
-use base qw/Verby::Action/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+with qw/Verby::Action/;
 
 sub do {
-	my $self = shift;
-	my $c = shift;
+	my ( $self, $c ) = @_;
 
 	my $dbh = $c->dbh;
 
-	local $dbh->{PrintError} = 0;
-	local $dbh->{RaiseError} = 0;
+	local $dbh->{PrintError}  = 0;
+	local $dbh->{RaiseError}  = 0;
 	local $dbh->{HandleError} = sub { $c->logger->logdie(shift(@_) . " $self " . Data::Dumper::Dumper($c->data)) };
 
 	$self->do_sql($c);
@@ -23,14 +19,21 @@ sub do {
 	$self->confirm($c);
 }
 
+sub verify {
+	my ( $self, $c ) = @_;
+	$c->sql_done;
+}
+
 sub do_sql {
-	my $self = shift;
-	my $c = shift;
+	my ( $self, $c ) = @_;
 
-	my $dbh = $c->dbh;
-	my $sql = $c->sql;
+	my $dbh    = $c->dbh;
+	my $sql    = $c->sql;
+	my @params = @{ $c->params || [] };
 
-	$dbh->do($sql);
+	$dbh->do($sql, @params);
+
+	$c->sql_done(1);
 }
 
 __PACKAGE__
@@ -63,6 +66,10 @@ This Action, given a SQL command will run it using L<DBI/do>.
 
 =back
 
+=head1 TODO
+
+Use one of the nonblocking POE DBI components.
+
 =head1 BUGS
 
 None that we are aware of. Of course, if you find a bug, let us know, and we will be sure to fix it. 
@@ -79,7 +86,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

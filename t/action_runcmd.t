@@ -3,34 +3,86 @@
 use strict;
 use warnings;
 
-use Test::More tests => 12;
+use Test::More tests => 22;
 use Test::MockObject;
 use Hash::AsObject;
 use Test::Exception;
 
-my $m; BEGIN { use_ok($m = "Verby::Action::RunCmd") };
+use POE;
 
-isa_ok(my $a = $m->new, $m);
+use ok "Verby::Action::Run";
+use ok "Verby::Action::Run::Unconditional";
 
-my $c = Hash::AsObject->new;
+{
+	package MyAction;
+	use Moose;
+
+	with "Verby::Action::Run::Unconditional";
+
+	sub do {
+		my ( $self, $c, @args ) = @_;
+		$self->create_poe_session( c => $c, @args );
+	}
+}
+
+isa_ok(my $a = MyAction->new, "MyAction");
+
 my $logger = Test::MockObject->new;
-
-$c->logger($logger);
 $logger->set_true($_) for qw/info warn/;
 $logger->mock("logdie" => sub { shift; die "@_" });
 
-can_ok($a, "run");
+can_ok($a, "create_poe_session");
 
-lives_ok {
-	$a->run($c, ["true"]);
-} "exec of 'true'";
+sub run_poe (&) {
+	my $code = shift;
 
-dies_ok {
-	$a->run($c, ["false"]);
-} "exec of 'false'";
+	eval {
+		POE::Session->create(
+			inline_states => {
+				_start => sub { $code->(); return },
+				_stop  => sub { },
+				_child => sub { },
+			},
+		);
+		$poe_kernel->run;
+	};
+}
+
+SKIP: {
+	my $true = "/usr/bin/true";
+	skip 3, "no true(1)" unless -x $true;
+
+	$logger->clear;
+	my $c = Hash::AsObject->new;
+	$c->logger($logger);
+
+	ok( !$a->verify($c), "command not yet verified" );
+	run_poe { $a->do( $c, cli => [$true]) };
+	ok( !$@, "exec of true" ) || diag "cought: $@";
+	ok( $a->verify($c), "command verified" );
+}
+
+SKIP: {
+	my $false = "/usr/bin/false";
+	skip 2, "no false(1)" unless -x $false;
+
+	$logger->clear;
+	my $c = Hash::AsObject->new;
+	$c->logger($logger);
+
+	ok( !$a->verify($c), "command not yet verified" );
+	run_poe { $a->do( $c, cli => [$false]) };
+	ok( $@, "exec of 'false'" ) || diag "no exception for false";
+	ok( $a->verify($c), "command verified" );
+}
 
 {
+	my $wc = "/usr/bin/wc";
+	skip 6, "no wc(1)" unless -x $wc;
+
 	$logger->clear;
+	my $c = Hash::AsObject->new;
+	$c->logger($logger);
 
 	my $in = <<FOO;
 line 1
@@ -38,27 +90,54 @@ foo
 bar
 FOO
 
-	my ($out, $err) = $a->run($c, [qw/wc -l/], { in => \$in });
+	ok( !$a->verify($c), "command not yet verified" );
+	run_poe { $a->do( $c, cli => [$wc, "-l"], in => \$in ) };
+	ok( !$@, "wc -l didn't die" ) || diag($@);
+	ok( $a->verify($c), "command verified" );
+	my ($out, $err) = ( $c->stdout, $c->stderr );
 	like($out, qr/^\s*\d+\s*$/, "output of wc -l looks sane");
-	ok(!$err, "no stderr");
+	is( ($err || ""), "", "no stderr");
 	ok(!$logger->called("warn"), "no warnings logged");
 }
 
 {
+	my $sh = "/bin/sh";
+	skip 5, "no sh(1)" unless -x $sh;
+
 	$logger->clear;
+	my $c = Hash::AsObject->new;
+	$c->logger($logger);
+
 	my $str = "foo";
-	my ($out, $err) = $a->run($c, [qw/sh -c/, "echo $str 1>&2"]);
+
+	ok( !$a->verify($c), "command not yet verified" );
+	run_poe { $a->do( $c, cli => [$sh,  "-c", "echo $str 1>&2"]) };
+	ok( $a->verify($c), "command verified" );
+	
+	my ($out, $err) = ( $c->stdout, $c->stderr );
 	chomp($err);
 	is($err, $str, "stderr looks good");
+
 	$logger->called_ok("warn");
 }
 
 {
+	my $true = "/usr/bin/true";
+	skip 2, "no true(1)" unless -x $true;
+
 	$logger->clear;
+	my $c = Hash::AsObject->new;
+	$c->logger($logger);
+
 	my $e = "blah\n";
 	my $o = "gorch\n";
 	my $init = sub { warn $e; print STDOUT $o };
-	my ($out, $err) = $a->run($c, ["true"], { init => $init });
+
+	run_poe { $a->do( $c, cli => [$true], init => $init ) };
+	my ($out, $err) = ( $c->stdout, $c->stderr );
+
+	$_ ||= '', chomp for $out, $err, $e, $o;
+
 	is($out, $o, "init invoked and outputted to stdout");
 	is($err, $e, "... and stderr");
 }

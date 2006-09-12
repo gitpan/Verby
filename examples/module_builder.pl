@@ -3,11 +3,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use Log::Log4perl qw/:easy/;
-
-use Cwd;
 
 use Verby::Step::Closure qw/step/;
 use Verby::Dispatcher;
@@ -25,7 +21,7 @@ Log::Log4perl::init(\$l4pconf);
 
 my $cfg = Verby::Config::Data->new;
 %{ $cfg->data } = (
-	untar_dir => cwd,
+	untar_dir => "/tmp",
 );
 
 my $d = Verby::Dispatcher->new;
@@ -33,39 +29,35 @@ $d->config_hub($cfg);
 
 foreach my $tarball (@ARGV){
 	my $mkdir = step "Verby::Action::MkPath" => sub {
-		my $self = shift;
-		my $c = shift;
+		my ( $self, $c ) = @_;
 		$c->path($c->untar_dir);
 	};
 	$mkdir->provides_cxt(1);
 
 	my $untar = step "Verby::Action::Untar" => sub {
-		my $self = shift;
-		my $c = shift;
+		my ( $self, $c ) = @_;
 		$c->tarball($tarball);
 		$c->dest($c->untar_dir);
 	}, sub {
-		my $self = shift;
-		my $c = shift;
-		if ($c->exists("src_dir")) {
-			$c->workdir($c->src_dir);
+		my ( $self, $c ) = @_;
+		if ($c->exists("main_dir")) {
+			$c->workdir($c->main_dir);
 			$c->export("workdir");
 		}
 	};
-	$untar->depends($mkdir);
+	$untar->depends([ $mkdir ]);
 
-	my $plscript = step "Verby::Action::MakefilePL";
-	$plscript->depends($untar);
+	my $plscript = step "Verby::Action::BuildTool";
+	$plscript->depends([ $untar ]);
 
 	my $make = step "Verby::Action::Make";
-	$make->depends($plscript);
+	$make->depends([ $plscript ]);
 
 	my $test = step "Verby::Action::Make" => sub {
-		my $self = shift;
-		my $c = shift;
+		my ( $self, $c ) = @_;
 		$c->target("test");
 	};
-	$test->depends($make);
+	$test->depends([ $make ]);
 
 	$d->add_step($test);
 }
@@ -115,7 +107,7 @@ The C<after> handler sets the C<workdir> variable to the value of the
 C<src_dir> variable, and exports C<workdir> so that it's accessible to
 subsequent steps.
 
-=item L<Verby::Action::MakefilePL>
+=item L<Verby::Action::BuildTool>
 
 The next thing to do is run the C<Makefile.PL> file. We set C<workdir> to
 C<src_dir> in the previous step, and that's all we need.
@@ -143,7 +135,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

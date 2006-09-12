@@ -4,7 +4,7 @@ package Verby;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = "0.02";
 
 __PACKAGE__
 
@@ -32,7 +32,7 @@ Verby - A framework for compositing and sequencing steps of execution.
 
 =head1 DESCRIPTION
 
-L<Verby> was originally rewitten to implement the backend of an installer.
+L<Verby> was originally written to implement the backend of an installer.
 
 An installer conceptually has two inputs, which are combined to get the job
 done.
@@ -81,8 +81,11 @@ command line app would have three config sources:
 	$config_hub->key;
 
 The config hub is sort of like an aggregate config source. It will ask it's
-parents in order for the key, and the first one that can supply it will be
-delegated to.
+parents for the key.
+
+The key ordering is symmetric (like role composition order), that is if two
+parents both contain the key it's as if there is no match, and a warning is
+emitted.
 
 =head1 Context
 
@@ -191,7 +194,7 @@ stevan little, E<lt>stevan@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

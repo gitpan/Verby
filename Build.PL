@@ -6,16 +6,15 @@ use Module::Build;
 
 Module::Build->new(
 	module_name => 'Verby',
-	dist_version_from => 'lib/Verby/Dispatcher.pm',
 	license => 'perl',
 	requires => {
-		'perl'                           => '>= 5.008',
-		'Set::Object'                    => 0,
-		'Log::Log4perl'                  => 0,
-		'Algorithm::Dependency::Objects' => 0,
-		'List::MoreUtils'                => 0,
-		'Devel::Caller::Perl'            => 0,
-		'UNIVERSAL::require'             => 0,
+		'perl'                => '5.008',
+		'Set::Object'         => '1.17',
+		'Log::Log4perl'       => 0,
+		'List::MoreUtils'     => 0,
+		'Devel::Caller::Perl' => 0,
+		'Class::Inspector'    => 0,
+		'POE'                 => '0.37',
 	},
 	auto_features => {
 		'Verby::Config::Source::ARGV' => {
@@ -58,6 +57,7 @@ Module::Build->new(
 		'Test::MockObject' => 0,
 		'Test::Deep'       => 0,
 		'Test::Exception'  => 0,
+		'Test::use::ok'    => 0,
 		'File::Temp'       => 0,
 		'Hash::AsObject'   => 0,
 		'Test::Plan'       => 0,

@@ -1,12 +1,9 @@
 #!/usr/bin/perl
 
 package Verby::Action::Mysql::CreateTable;
-use base qw/Verby::Action::Mysql::DoSql/;
+use Moose;
 
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
+extends qw/Verby::Action::Mysql::DoSql/;
 
 use Verby::Action::Mysql::Util;
 
@@ -34,7 +31,7 @@ sub verify {
 
 	my $table_name = $c->table;
 
-	my $table_info = Verby::Action::Mysql::Util->new($c->dbh)->get_info($table_name);
+	my $table_info = Verby::Action::Mysql::Util->new(dbh => $c->dbh)->get_info($table_name);
 	$c->logger->debug("table info query on '$table_name' yields " . ($table_info ? "true" : "false"));
 	
 	return ($table_info ? 1 : undef);
@@ -84,7 +81,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005 by Infinity Interactive, Inc.
+Copyright 2005, 2006 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
