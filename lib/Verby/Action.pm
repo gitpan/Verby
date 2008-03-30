@@ -3,7 +3,7 @@
 package Verby::Action;
 use Moose::Role;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 use Carp qw/longmess/;
 
@@ -15,7 +15,7 @@ sub confirm {
 	my ( $self, $c, @args ) = @_;
 
 	$self->verify($c, @args) or
-		$c->logger->logdie(
+		$c->logger->log_and_die(level => "error", message => 
 			"verification of $self failed: "
 			. ($c->error || "error unknown"));
 }
@@ -73,7 +73,7 @@ The thing that the action really does. For example
 
 Will use wget to download C<< $c->url >> to C<< $c->file >>.
 
-This is a bad example though, you ought to subclass L<Verby::Action::RunCmd> if
+This is a bad example though, you ought to subclass L<Verby::Action::Run> if
 you want to run a command.
 
 =item B<verify $cxt>
@@ -102,7 +102,7 @@ Typically called at the end of an action's do:
 		$self->confirm($c);
 	}
 
-It will call C<< $c->logger->logdie >> unless C<verify> returns a true value.
+It will call C<< $c->logger->log_and_die >> unless C<verify> returns a true value.
 
 If C<< $c->error >> contains a string then it'll be printed as well.
 
@@ -143,7 +143,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

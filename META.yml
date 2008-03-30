@@ -1,107 +1,29 @@
----
-name: Verby
-version: 0.03
-author:
-  - 'Stevan Little <stevan@iinteractive.com>'
-  - 'Yuval Kogman <nothingmuch@woobling.org>'
-abstract: A framework for compositing and sequencing steps of execution.
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-requires:
-  Class::Inspector: 0
-  Devel::Caller::Perl: 0
-  List::MoreUtils: 0
-  Log::Log4perl: 0
-  POE: 0.37
-  Set::Object: 1.17
-  perl: 5.008
-build_requires:
-  File::Temp: 0
-  Hash::AsObject: 0
-  Test::Deep: 0
-  Test::Exception: 0
-  Test::MockObject: 0
-  Test::More: 0
-  Test::Plan: 0
-  Test::use::ok: 0
-provides:
-  Log::Log4perl::Layout::SimpleLayout::Multiline:
-    file: lib/Log/Log4perl/Layout/SimpleLayout/Multiline.pm
-  Verby:
-    file: lib/Verby.pm
-    version: 0.03
-  Verby::Action:
-    file: lib/Verby/Action.pm
-    version: 0.03
-  Verby::Action::AnalyzeDataFile:
-    file: lib/Verby/Action/AnalyzeDataFile.pm
-  Verby::Action::BuildTool:
-    file: lib/Verby/Action/BuildTool.pm
-  Verby::Action::Copy:
-    file: lib/Verby/Action/Copy.pm
-    version: 0.03
-  Verby::Action::Make:
-    file: lib/Verby/Action/Make.pm
-    version: 0.03
-  Verby::Action::MkPath:
-    file: lib/Verby/Action/MkPath.pm
-    version: 0.03
-  Verby::Action::Mysql::CreateDB:
-    file: lib/Verby/Action/Mysql/CreateDB.pm
-  Verby::Action::Mysql::CreateTable:
-    file: lib/Verby/Action/Mysql/CreateTable.pm
-    version: 0.03
-  Verby::Action::Mysql::DoSql:
-    file: lib/Verby/Action/Mysql/DoSql.pm
-    version: 0.03
-  Verby::Action::Mysql::LoadDataFile:
-    file: lib/Verby/Action/Mysql/LoadDataFile.pm
-    version: 0.03
-  Verby::Action::Mysql::Util:
-    file: lib/Verby/Action/Mysql/Util.pm
-    version: 0.03
-  Verby::Action::Run:
-    file: lib/Verby/Action/Run.pm
-  Verby::Action::Run::Unconditional:
-    file: lib/Verby/Action/Run/Unconditional.pm
-  Verby::Action::Stub:
-    file: lib/Verby/Action/Stub.pm
-    version: 0.03
-  Verby::Action::Template:
-    file: lib/Verby/Action/Template.pm
-    version: 0.03
-  Verby::Action::Untar:
-    file: lib/Verby/Action/Untar.pm
-    version: 0.03
-  Verby::Config::Data:
-    file: lib/Verby/Config/Data.pm
-    version: 0.03
-  Verby::Config::Data::Mutable:
-    file: lib/Verby/Config/Data/Mutable.pm
-    version: 0.03
-  Verby::Config::Source:
-    file: lib/Verby/Config/Source.pm
-    version: 0.03
-  Verby::Config::Source::ARGV:
-    file: lib/Verby/Config/Source/ARGV.pm
-    version: 0.03
-  Verby::Config::Source::Prompt:
-    file: lib/Verby/Config/Source/Prompt.pm
-    version: 0.03
-  Verby::Context:
-    file: lib/Verby/Context.pm
-    version: 0.03
-  Verby::Dispatcher:
-    file: lib/Verby/Dispatcher.pm
-    version: 0.03
-  Verby::Step:
-    file: lib/Verby/Step.pm
-    version: 0.03
-  Verby::Step::Closure:
-    file: lib/Verby/Step/Closure.pm
-    version: 0.03
-generated_by: Module::Build version 0.2801
+--- #YAML:1.0
+name:                Verby
+version:             0.04
+abstract:            ~
+license:             ~
+author:              ~
+generated_by:        ExtUtils::MakeMaker version 6.42
+distribution_type:   module
+requires:     
+    Class::Inspector:              0
+    Directory::Scratch:            0
+    File::Path:                    0
+    File::Temp:                    0
+    Hash::AsObject:                0
+    List::MoreUtils:               0
+    Log::Dispatch:                 2.21
+    Moose:                         0.40
+    MooseX::LogDispatch:           1.1001
+    POE:                           0.37
+    POE::Component::ResourcePool:  0.03
+    Set::Object:                   1.17
+    Test::Deep:                    0
+    Test::Exception:               0
+    Test::MockObject:              0
+    Test::More:                    0
+    Test::use::ok:                 0
 meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3

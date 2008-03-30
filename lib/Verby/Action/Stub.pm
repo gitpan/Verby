@@ -3,19 +3,34 @@
 package Verby::Action::Stub;
 use Moose;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 with qw/Verby::Action/;
+
+has name => (
+	isa => "Str",
+	is  => "rw",
+	lazy_build => 1,
+);
+
+sub _build_name {
+	my $self = shift;
+	my $class = ref $self;
+
+	$class =~ s/^Verby::Action:://;
+
+	return $class;
+}
 
 sub do {
 	my ( $self, $c ) = @_;
 	$c->done(1);
-	$c->logger->debug("stub do");
+	$c->logger->debug($self->name . " do");
 }
 
 sub verify {
 	my ( $self, $c ) = @_;
-	$c->logger->debug("stub verify");
+	$c->logger->debug($self->name . " verify");
 	$c->done;
 }
 
@@ -71,7 +86,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

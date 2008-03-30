@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.54.
+signed via the Module::Signature module, version 0.55.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,63 +14,51 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 c4fc2c0bee5a45e71cdec40be6eedc007e899b24 Build.PL
-SHA1 7291ed0d4bf066d8ce872e47936616729a491c19 Changes
-SHA1 fe237a34f71bbf0038555b847c0361aa02866744 MANIFEST
-SHA1 02803c065a508d6a10482632792ebaaa07ad99a8 META.yml
-SHA1 86b72894de9c126a1b098ce074980960acda2b8c Makefile.PL
+SHA1 a237b31a7a37a61cede7d9ecb02a936c2c1b61eb Changes
+SHA1 20f25e8572f550d73f134e218339f45f2c02c772 MANIFEST
+SHA1 ddb918d4e02cc06f4b9fe77adeca65403f8fdd56 MANIFEST.SKIP
+SHA1 8ad79bd1ac449d4debbbd0e16907c009e3a31a20 META.yml
+SHA1 8d5d95135012746d7a983b27b769b4379cce8aa6 Makefile.PL
 SHA1 0a38ba64a622cec3da81cc36e97405f016331e2e README
-SHA1 57ce3c4e2110b09de5eb4752a2c2548ed858d020 examples/module_builder.pl
-SHA1 7d0554b38c04a2a4add3fb211956ed528c04951a examples/mysql_load.pl
-SHA1 abd3f8fbc6cce8ae3bcd24bf8567d7a346330c0b lib/Log/Log4perl/Layout/SimpleLayout/Multiline.pm
-SHA1 598d5b34a59b194abb19a24b4ff343f91ec5a382 lib/Verby.pm
-SHA1 18b6aff51ccfdbbd598399fbeb4e160adafa6a4c lib/Verby/Action.pm
-SHA1 dce5bb309a84f9891cdf6be3e79440f6c4312751 lib/Verby/Action/AnalyzeDataFile.pm
-SHA1 e2a7fce3623f9f625ade37025fc95e0c04aaf326 lib/Verby/Action/BuildTool.pm
-SHA1 4636bbc5452d8fba6f1555ebb5277e84e5c43ce4 lib/Verby/Action/Copy.pm
-SHA1 a5d6b152c28e6ee9f00ddedca08f5c3f67204cf7 lib/Verby/Action/Make.pm
-SHA1 c56e85166af89460424c05d40a2dd88f0a86a4bc lib/Verby/Action/MkPath.pm
-SHA1 5b85c417853c3218e9bc62af25a7bb8f3c7f0636 lib/Verby/Action/Mysql/CreateDB.pm
-SHA1 e8463fbdc7a076b30685f80f270e553c94805656 lib/Verby/Action/Mysql/CreateTable.pm
-SHA1 09ce0ff4e53fe5b219fb8c3f586f8c069e1f9c0e lib/Verby/Action/Mysql/DoSql.pm
-SHA1 20b1db101e0df039781c9f9be5a38dfd66759d2a lib/Verby/Action/Mysql/LoadDataFile.pm
-SHA1 bb4ba4f12a167ac831d3594bdad1fb8d3d7f4c2b lib/Verby/Action/Mysql/Util.pm
-SHA1 d2c710960b37cf9e1c61928748ca0077abf37e76 lib/Verby/Action/Run.pm
+SHA1 157030f33c3b4fca8df403900c6bfabf5a5087ad examples/module_builder.pl
+SHA1 9f7cd4d7ca7a5bbda515576c5398fcd075cb55c9 examples/mysql_load.pl
+SHA1 271cb08d885953f8336951fe48a4dbea0133eae1 examples/template.pl
+SHA1 b94c2e7141b8ef4654954e168d8ace26373f71bb lib/Verby.pm
+SHA1 77332ed1d005c8f124c3c8471c3b0e84a0a22196 lib/Verby/Action.pm
+SHA1 6d441ffc1f209c1bf2e5183a78bf2504397705af lib/Verby/Action/BuildTool.pm
+SHA1 dc83f82a85e0efd58fb61d6379878581e2a63ddc lib/Verby/Action/Make.pm
+SHA1 1ccd843f4ccc61297a1c04586e6623ca7a4ad491 lib/Verby/Action/MkPath.pm
+SHA1 88e6f13c7dca6070daead638ceccf395c706e73c lib/Verby/Action/Run.pm
 SHA1 949befe2e4212b56357ba48a24cec2841bd1e4e6 lib/Verby/Action/Run/Unconditional.pm
-SHA1 376eabfd6a1be45949e9f8c1f6ffadf9bbc587dc lib/Verby/Action/Stub.pm
-SHA1 702dfc4e431af8b61c3cd4e10076b0115df0421e lib/Verby/Action/Template.pm
-SHA1 a37b7b46532d9a58368ce60f23035725a5314008 lib/Verby/Action/Untar.pm
-SHA1 695a7583f805f352534d60bddf9b041349976b6d lib/Verby/Config/Data.pm
-SHA1 a3adada1a2075a4f8450ac140e29f08f8354de69 lib/Verby/Config/Data/Mutable.pm
-SHA1 6b5dc8c10d6601fa0e1ef5127165c1c64f0fe978 lib/Verby/Config/Source.pm
-SHA1 4cce7e8a5f3476ae742014d0e0f6a274f6a967df lib/Verby/Config/Source/ARGV.pm
-SHA1 1d9b67e797459fce7eeff3ea80a55f3a157ab209 lib/Verby/Config/Source/Prompt.pm
-SHA1 e9f1ccd4ddb184962cf2c326edb2d93c55b39086 lib/Verby/Context.pm
-SHA1 5e716fd8a6ba9493e20a22bb36898ed770b1c618 lib/Verby/Dispatcher.pm
-SHA1 c31c9f5380a50ed31405b858699c2a63cdd68872 lib/Verby/Step.pm
-SHA1 36a61abbe9c8a569a913deb4fbeedf6a89e58cc3 lib/Verby/Step/Closure.pm
-SHA1 132268f113da5d97e0e79c291cc4efec46eb4ff4 t/00_dist.t
-SHA1 58c93be38b062c42f5da6de257ebb87dc2e4654a t/00_use.t
-SHA1 0b86c2ae1cf9abe300013a9bd783239438c281ac t/action.t
-SHA1 3703174431b43e7c08a3682dd9a8b3b087d8374b t/action_analyze_file.t
-SHA1 d4368ca0a9bb22fd4eaa7e266fc3865bcd9336dc t/action_buildtool.t
-SHA1 66303cbd261cf0203951e43b3e2fb4d6403964d4 t/action_mkpath.t
-SHA1 4aa2c063161d1f5ff5077da0776c0558fdd1828c t/action_mysql_createdb.t
-SHA1 d867f4d77dd98cfa5e6688922af8a30810c5497d t/action_mysql_loaddata.t
-SHA1 4adb9631693995ccfbbaf49652c30a825e4cf1b9 t/action_runcmd.t
-SHA1 a0405aaf921303d89ef5a75fbfefcd2558c12cd6 t/action_template.t
-SHA1 692841dfffac4f33a6ea5fca6f4e6cb1183881fc t/config_data.t
+SHA1 3c21230b8c82a57578cd7d73486f8f4869174db1 lib/Verby/Action/Stub.pm
+SHA1 e3275a78cb895eada013907838188d80e79845e2 lib/Verby/Config/Data.pm
+SHA1 55973040d6b7e25bfcbcf66e1445e0e750ef082d lib/Verby/Config/Data/Mutable.pm
+SHA1 c9a3197e108a686bc8ba56fb253aa4a7f2af34ac lib/Verby/Config/Source.pm
+SHA1 9444efec3b42e4fc1cd5f30c350165177915c06c lib/Verby/Config/Source/ARGV.pm
+SHA1 0c844755e0fe877b4fac80d858c5fcd931a3862e lib/Verby/Config/Source/Prompt.pm
+SHA1 4b3e68ae879377fbb9a262b121f254bd3fc3d355 lib/Verby/Context.pm
+SHA1 55e509879b6cd22bc234366f2a95ad519135b4e7 lib/Verby/Dispatcher.pm
+SHA1 dfe16cafdb1ae1b272917ae22a186a4e880318d1 lib/Verby/Step.pm
+SHA1 ccc7777dfe13d4a8ea1120d68b7a13b3a54007f3 lib/Verby/Step/Closure.pm
+SHA1 8d20510b16996a57009811eeda6c8606f8948362 lib/Verby/Step/Simple.pm
+SHA1 36f5dabfe7545f52831bfafff3123963c01a40b3 t/00_use.t
+SHA1 90f14ec251bb3f07e99b2d397ed198b558b92a69 t/action.t
+SHA1 433b8a2b1a035ba52274af5902193e585a5b28fa t/action_buildtool.t
+SHA1 108064db15beecf60534a0d55b9d43e4e9ee9605 t/action_mkpath.t
+SHA1 dda18054ce67d136784794a91ea332514759ea2c t/action_runcmd.t
+SHA1 910e40f33f773d93a054e1e258fe67a7afe660df t/config_data.t
 SHA1 6a143b6a637bcff00ba1928ad07a1bec8b1b24f2 t/config_data_mutable.t
 SHA1 e2fe2ee852dfa96e1cd7219c3de4e0ef2eaa357d t/dispatch_async.t
-SHA1 16de77dd0f7a01fe3aa936287f56db904cabad52 t/dispatch_async_stress.t
+SHA1 323ef23703ac2f17c7e4c7ad27aa3105f45a859d t/dispatch_async_stress.t
 SHA1 209e43422d14f1b8253b41cc28eba58bb370f871 t/dispatch_presatisfied.t
 SHA1 5f1a1839fc8cab211dc5390cd5c31ebc55668d2c t/dispatch_simple.t
-SHA1 d5522b58c8e8d58ab4575bb59ae57698b87060f9 t/step_closure.t
+SHA1 a113859816da7fbd4500cdce1c99f2d1a6663939 t/resource_pool.t
+SHA1 c037c10b9c3cb31807db0f537fa4f331bc44f204 t/step_closure.t
 SHA1 2b8965881746682732bb28d7d5156f1853919ab6 verby_par.pl
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (Darwin)
+Version: GnuPG v1.4.7 (Darwin)
 
-iD8DBQFFBqdUVCwRwOvSdBgRAjwTAJ96HLi6bslf68okm/vM43iylM0KagCguM/Y
-ZbbcedNjUYWxo/KmXhIEgus=
-=VNm4
+iD8DBQFH78C7VCwRwOvSdBgRAhZvAJwOtTUEQogQRVx/ygNg03WLBKAUAgCdHSwR
+pv7/XXmRMgvA8UQCtLKtX2U=
+=VH5v
 -----END PGP SIGNATURE-----

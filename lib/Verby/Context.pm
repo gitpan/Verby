@@ -5,27 +5,19 @@ use Moose;
 
 extends qw/Verby::Config::Data::Mutable/;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
-use Log::Log4perl ();
-use Devel::Caller::Perl ();
 require overload;
 
-sub logger {
-	my $self = shift;
+with qw(MooseX::LogDispatch);
 
-	return $self->SUPER::logger(@_) || $self->_get_logger();
-}
+has 'use_logger_singleton' => ( default => 1 );
 
-sub _get_logger {
-	my $self = shift;
-	my $obj; $obj ||= (Devel::Caller::Perl::called_args($_))[0] for (2, 1);
+around logger => sub {
+	my ( $next, $self, @args ) = @_;
 
-	my $class = ref $obj || $obj;
-	my $str = (overload::Method($obj, '""') ? "::$obj" : ""); # if it knows to stringify, get that too
-
-	return Log::Log4perl::get_logger("$class$str");
-}
+	return $self->SUPER::logger(@args) || $self->$next(@args);
+};
 
 __PACKAGE__
 
@@ -45,6 +37,7 @@ L<Verby::Dispatcher>.
 		my $context = shift;
 
 		print $context->rockets; # get a value
+gDi
 		$context->milk("very"); # set a value
 	}
 
@@ -73,11 +66,7 @@ practice.
 
 	$c->logger;
 
-will delegate to L<Log::Log4perl/get_logger>, sending it a nice string for a
-category.
-
-The category is the class of the caller, concatenated a stringification of the
-object if the object can stringify.
+See L<MooseX::LogDispatch>.
 
 =head1 BUGS
 
@@ -95,7 +84,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

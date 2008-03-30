@@ -3,16 +3,11 @@
 use strict;
 use warnings;
 
-use Test::More;
-use Test::Plan;
+use Test::More tests => 7;
 use Hash::AsObject;
 use Test::MockObject;
 use POE;
-
-BEGIN {
-	plan tests => 7,
-	need_module("Directory::Scratch");
-}
+use Directory::Scratch;
 
 use ok "Verby::Action::BuildTool";
 
@@ -43,8 +38,8 @@ utime( $now - 10, $now - 10, $makefile_pl );
 my $a = Verby::Action::BuildTool->new;
 
 my $logger = Test::MockObject->new;
-$logger->set_true("info");
-$logger->mock( logdie => sub { warn "$_[1]"; die "$_[1]"; } );
+$logger->set_true($_) for qw(info debug);
+$logger->mock( log_and_die => sub { warn "$_[1]"; die "$_[1]"; } );
 
 my $c = Hash::AsObject->new;
 $c->workdir($temp->base);

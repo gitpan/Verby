@@ -3,14 +3,20 @@
 package Verby::Step;
 use Moose::Role;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
+
+requires "do";
 
 requires "depends";
 
 requires "is_satisfied";
 
 sub provides_cxt {
-	undef;
+	return undef;
+}
+
+sub resources {
+	return ( steps => 1 );
 }
 
 __PACKAGE__
@@ -58,8 +64,9 @@ you do before and after others.
 
 =head1 METHODS
 
-All methods should be subclassed except for C<provides_cxt>. This class is
-nearly completely virtual.
+This role provides the C<provides_cxt> and C<resources> methods, with sane
+default values, and requires C<depends>, C<is_satisfied> and C<do>. See
+L<Verby::Step::Simple> and L<Verby::Step::Closure> for more reusable behavior.
 
 =over 4
 
@@ -101,6 +108,14 @@ chose C<the_path_to_the_thing> to be in your config, this is the place to do:
 L<Verby::Step::Closure> provides a convenient way to get this behavior for
 free.
 
+=item B<resources>
+
+Returns the list of required resources to allocate with the dispatcher's
+resource pool, if provided.
+
+This defaults to the resource C<steps> with the value C<1>, generally intended
+to control the maximum number of concurrent jobs.
+
 =back
 
 =head1 BUGS
@@ -121,7 +136,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

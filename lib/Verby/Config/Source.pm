@@ -3,7 +3,7 @@
 package Verby::Config::Source;
 use Moose;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 extends qw/Verby::Config::Data/;
 
@@ -69,7 +69,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

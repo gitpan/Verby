@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More 'no_plan';
 
-use constant HAVE_DBD_MYSQL => scalar eval { require DBD::mysql; 1 };
+use constant HAVE_DBD_MYSQL => scalar eval { require DBD::mysql; require Time::Piece::MySQL; 1 };
 use constant HAVE_FILE_RSYNC => scalar eval { require File::Rsync; 1 };
 use constant HAVE_GETOPT_CASUAL => scalar eval { require Getopt::Casual; 1 };
 
@@ -29,17 +29,8 @@ use ok "Verby::Action::MkPath";
 use ok "Verby::Action::Run";
 use ok "Verby::Action::Run::Unconditional";
 
-use ok "Verby::Action::Untar";
 use ok "Verby::Action::Make";
 use ok "Verby::Action::BuildTool";
-use if HAVE_FILE_RSYNC, ok => "Verby::Action::Copy";
-
-use if HAVE_DBD_MYSQL, ok => "Verby::Action::Mysql::CreateDB";
-use if HAVE_DBD_MYSQL, ok => "Verby::Action::Mysql::CreateTable";
-use if HAVE_DBD_MYSQL, ok => "Verby::Action::Mysql::DoSql";
-use if HAVE_DBD_MYSQL, ok => "Verby::Action::Mysql::LoadDataFile";
-
-use ok "Verby::Action::Template";
 
 use ok "Verby::Step";
 

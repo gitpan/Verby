@@ -3,9 +3,14 @@
 package Verby::Step::Closure;
 use Moose;
 
-with qw/Verby::Step/;
+with qw/Verby::Step::Simple/;
 
-our $VERSION = "0.03";
+extends qw(Moose::Object Exporter);
+
+our @EXPORT = "step";
+our @EXPORT_OK = ( @EXPORT, qw(chain_steps) );
+
+our $VERSION = "0.04";
 
 use overload '""' => 'stringify';
 
@@ -14,27 +19,13 @@ use Carp qw/croak/;
 
 use POE;
 
-# stevan hates Exporter, so this is not a bug ;-)
-# FIXME - use Sub::Exporter
-sub import {
-    shift;            # remove pkg
-    return unless @_; # dont export it if they dont ask
-	no strict 'refs';
-    *{ (caller())[0] . "::step"} = \&step if $_[0] eq 'step';
-}
-
-sub depends {} # FIXME Moose::Role
-has depends => (
-	isa => "ArrayRef",
-	is  => "rw",
-	default    => sub { [] },
-	auto_deref => 1,
-);
-
-has action => (
-	isa => "Object", # "Verby::Action",
-	is => "rw",
-);
+#my $id;
+#has id => (
+#	isa => "Int",
+#	is  => "ro",
+#	init_arg => undef,
+#	default => sub { ++$id },
+#);
 
 has pre => (
 	isa => "CodeRef",
@@ -50,11 +41,6 @@ has provides_cxt => (
 	isa => "Bool",
 	is  => "rw",
 );
-
-sub add_deps {
-	my $self = shift;
-	push @{ $self->depends }, @_;
-}
 
 sub is_satisfied {
 	my $self = shift;
@@ -83,25 +69,56 @@ sub _wrapped {
 	$self->action->$action_method(@args);
 }
 
-sub step ($;&&) {
-	my ( $action, $pre, $post ) = @_;
+sub step ($;%) {
+	my ( $action, @args ) = @_;
+
+	if ( @args == 1 ) {
+		unshift @args, "pre";
+	} elsif ( ref $args[0] and ref $args[0] ) {
+		my ( $pre, $post ) = splice @args, 0, 2;
+		unshift @args, pre => $pre, post => $post;
+	}
+
+	my %args = @args;
 
 	unless (blessed $action){
 		unless (Class::Inspector->loaded($action)) {
-            (my $file = "${action}.pm") =~ s{::}{/}g;
-            require $file;
+			(my $file = "${action}.pm") =~ s{::}{/}g;
+			require $file;
 		}
 
 		$action = $action->new;
 	}
 
+	if ( exists $args{depends} and ref $args{depends} and ref $args{depends} ne 'ARRAY' ) {
+		warn "$args{depends} is not an array";
+		$args{depends} = [ $args{depends} ];
+	}
+
 	my $step = Verby::Step::Closure->new(
-		pre    => $pre,
-		post   => $post,
+		%args,
 		action => $action
 	);
 
 	$step;
+}
+
+sub chain_steps {
+	my ( $head, @tail ) = @_;
+
+	return unless $head;
+
+	return $head unless @tail;
+
+	my @rest = chain_steps(@tail);
+
+	$rest[0]->add_deps($head);
+	
+	if ( wantarray ) {
+		return ( $head, @rest );
+	} else {
+		return $rest[-1];
+	}
 }
 
 sub stringify {
@@ -172,19 +189,11 @@ Append more steps to the dep list.
 
 =item B<is_satisfied>
 
-=item B<finish>
-
-=item B<start>
+Calls the pre hook, C<verify> and then the post hook.
 
 =item B<do>
 
-These methods all call the pre callback (except for C<finish>), then the
-corresponding method on the action (special case: L<Action/verify> for
-C<is_satisfied>), and lastly the post callback (except for C<start>).
-
-=item B<pump>
-
-This just delegates to the pump method of the action.
+Calls the pre hook, C<do>, and lastly the post hook.
 
 =item B<stringify>
 
@@ -226,7 +235,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

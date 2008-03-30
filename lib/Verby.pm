@@ -4,7 +4,7 @@ package Verby;
 use strict;
 use warnings;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 __PACKAGE__
 
@@ -122,8 +122,8 @@ It also provides a magic field:
 
 	my $l = $c->logger;
 
-Which returns a L<Log::Log4perl> logger, and tries to guess a proper namespace
-for the step/action asking for the it.
+See L<MooseX::LogDispatch>. If a logger is in a parent of the context it will
+be returned instead.
 
 =head1 EXECUTION
 
@@ -158,14 +158,14 @@ did not export a necessary field yet. In this case C<verify> should just return
 false, and will be asked again in due time.
 
 An error, on the other hand, should be fatal. L<Verby> uses
-L<Log::Log4perl/logdie> to do this.
+L<MooseX::LogDispatch> to do this.
 
 Actions should be short and sweet, doing as little as possible. Remember that a
 step being a delegator for actions is not limited to using only one action, so
 if you need to combine procedures, still try to refactor them.
 
 Long running steps, especially ones which drive external processes, like ones
-using L<Verby::Action::RunCmd> should be asynchroneous. This allows
+using L<Verby::Action::Run> should be asynchroneous. This allows
 non-interdependant steps to be executed in parallel.
 
 Actions should minimize partial side effects. Transactional behavior is desired
@@ -194,7 +194,7 @@ stevan little, E<lt>stevan@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

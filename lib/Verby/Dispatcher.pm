@@ -3,13 +3,8 @@
 package Verby::Dispatcher;
 use Moose;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
-# FIXME
-# do_all and wait_specific could be optimized to be a little less O(N) ish.
-# with small data sets it doesn't really matter.
-
-use Algorithm::Dependency::Objects::Ordered;
 use Set::Object;
 use Verby::Context;
 use Carp qw/croak/;
@@ -44,7 +39,7 @@ has derivable_cxts => (
 	isa => "HashRef",
 	is	=> "ro",
 	default => sub {
-	tie my %derivable_cxts, "Tie::RefHash";
+		tie my %derivable_cxts, "Tie::RefHash";
 		return \%derivable_cxts;
 	},
 );
@@ -52,6 +47,10 @@ has derivable_cxts => (
 has config_hub => (
 	isa => "Object",
 	is	=> "rw",
+	default => sub {
+		require Verby::Config::Data;
+		Verby::Config::Data->new;
+	},
 );
 
 has global_context => (
@@ -59,6 +58,12 @@ has global_context => (
 	is	=> "ro",
 	lazy	=> 1,
 	default => sub { $_[0]->config_hub->derive("Verby::Context") },
+);
+
+has resource_pool => (
+	isa => "POE::Component::ResourcePool",
+	is  => "ro",
+	predicate => "has_resource_pool",
 );
 
 sub add_step {
@@ -115,7 +120,7 @@ sub create_poe_sessions {
 
 	my $g_cxt = $self->global_context;
 	$g_cxt->logger->debug("Creating parent POE session");
-	
+
 	POE::Session->create(
 		inline_states => {
 			_start => sub {
@@ -152,7 +157,7 @@ sub create_poe_sessions {
 
 								if ( $deps->includes($done) ) {
 									$deps->remove( $done );
-									$kernel->yield("try_executing_step");
+									$kernel->yield("try_executing_step") unless $deps->size;
 								}
 							},
 							try_executing_step => sub {
@@ -161,19 +166,33 @@ sub create_poe_sessions {
 								return if $heap->{dependencies}->size; # don't run if we're waiting
 								return if $heap->{ran}++; # don't run twice
 
-								my $step = $heap->{step};
-
 								$heap->{g_cxt}->logger->debug("All dependencies of '$step' have finished, starting");
 
 								$kernel->sig("VERBY_STEP_FINISHED"); # we're no longer waiting for other steps to finish
 								$kernel->refcount_decrement( $session->ID, "unresolved_dependencies" );
 
+								if ( my $pool = $heap->{resource_pool} and my @req = $heap->{step}->resources ) {
+									$heap->{resource_request} = $pool->request(
+										params => { @req },
+										event  => "execute_step",
+									);
+								} else {
+									$kernel->call( $session, "execute_step" );
+								}
+							},
+							execute_step => sub {
+								my ( $kernel, $session, $heap ) = @_[KERNEL, SESSION, HEAP];
+
 								# this may create child sessions. If it doesn't this session will go away
-								$heap->{verby_dispatcher}->start_step( $step, \@_ );
+								$heap->{verby_dispatcher}->start_step( $heap->{step}, \@_ );
 							},
 							_stop => sub {
 								my ( $kernel, $heap ) = @_[KERNEL, HEAP];
 								my $step = $heap->{step};
+
+								if ( my $request = delete $heap->{resource_request} ) {
+									$request->dismiss;
+								}
 
 								$heap->{g_cxt}->logger->info("step $step has finished.");
 
@@ -209,6 +228,7 @@ sub create_poe_sessions {
 			verby_dispatcher => $self,
 			g_cxt            => $g_cxt, # convenience
 			satisfied        => $self->satisfied_set,
+			( $self->has_resource_pool ? ( resource_pool => $self->resource_pool ) : () ),
 		}
 	);
 }
@@ -233,34 +253,6 @@ sub start_step {
 
 	$g_cxt->logger->debug("starting step $step");
 	$step->do($cxt, $poe);
-}
-
-sub pump_running {
-	my $self = shift;
-
-	$self->global_context->logger->debug("pumping all running steps");
-
-	foreach my $step (@{ $self->{running_queue} }){
-		next unless $step->can("pump");
-
-		unless ($step->pump($self->get_cxt($step))){
-			$self->global_context->logger->debug("step '$step' has finished");
-			$self->wait_specific($step);
-		}
-	}
-}
-
-sub finish_step {
-	# FIXME.... Technical debt!
-	die "Can't finish an unstarted step... the universe is bending!";
-	my $self = shift;
-	my $step = shift;
-
-	my $cxt = $self->get_cxt($step);
-
-	$step->finish($cxt);
-	$self->satisfied_set->insert($step);
-	$self->running_set->remove($step);
 }
 
 sub _set_members_query {
@@ -311,6 +303,37 @@ Makefile.
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=item B<resource_pool>
+
+If provided with a L<POE::Component::ResourcePool> instance, that resource pool
+will be used to handle resource allocation.
+
+The L<Verby::Step/resources> method is used to declare the required resources
+for each step.
+
+=item B<step_set>
+
+Returns the L<Set::Object> that is used for internal bookkeeping of the steps
+involved.
+
+=item B<satisfied_set>
+
+Returns the L<Set::Object> that is used to track which steps are satisfied.
+
+=item B<config_hub>
+
+The configuration hub that all contexts inherit from.
+
+Defaults to an empty parameter set.
+
+=item B<global_context>
+
+The global context objects.
+
+Defaults to a derivation of B<config_hub>.
+
 =head1 METHODS
 
 =over 4
@@ -330,28 +353,13 @@ added into the batch too.
 
 =item B<do_all>
 
-Calculate all the dependencies using L<Algorithm::Dependency::Objects>, and
-then dispatch in order.
+Calculate all the dependencies, and then dispatch in order.
 
-=item B<dep_engine_class>
+=back
 
-The class used to instantiate the dependecy resolver. Defaults to
-L<Algorithm::Dependency::Objects::Ordered>. Subclass if you don't like it.
+=begin private
 
-=item B<config_hub ?$new_config_hub>
-
-A setter getter for the L<Verby::Config::Data> (or compatible) object from which we
-will derive the global context, and it's sub-contexts.
-
-=item B<global_context>
-
-Returns the global context for the dispatcher.
-
-If necessary derives a context from L</config_hub>.
-
-=item B<is_running $step>
-
-Whether or not $step is currently executing.
+=over 4
 
 =item B<is_satisfied $step>
 
@@ -382,76 +390,15 @@ the global context.
 
 =item B<start_step $step>
 
-If step supports the async interface, start it and put it in the running step
-queue. If it's synchroneous, call it's L<Step/do> method.
-
-=item B<finish_step $step>
-
-Finish step, and mark it as satisfied. Only makes sense for async steps.
-
-=item B<mark_running $step>
-
-Put $step in the running queue, and mark it in the running step set.
-
-=item B<push_running $step>
-
-Push $step into the running step queue.
-
-=item B<pop_running>
-
-Pop a step from the running queue.
-
-=item B<mk_dep_engine>
-
-Creates a new object using L</dep_engine_class>.
-
-=item B<ordered_steps>
-
-Returns the steps to be executed in order.
-
-=item B<pump_running>
-
-Give every running step a bit of time to move things forward.
-
-This method is akin to L<IPC::Run/pump>.
-
-It also calls L</finish_step> on each step that returns false.
+Starts the 
 
 =item B<steps>
 
 Returns a list of steps that the dispatcher cares about.
 
-=item B<step_set>
-
-Returns the L<Set::Object> that is used for internal bookkeeping of the steps
-involved.
-
-=item B<running_steps>
-
-Returns a list of steps currently running.
-
-=item B<running_set>
-
-Returns the L<Set::Object> that is used to track which steps are running.
-
-=item B<satisfied_set>
-
-Returns the L<Set::Object> that is used to track which steps are satisfied.
-
-=item B<wait_all>
-
-Wait for all the running steps to finish.
-
-=item B<wait_one>
-
-Effectively C<finish_step(pop_running)>.
-
-=item B<wait_specific $step>
-
-Waits for a specific step to finish. Called by L<pump_running> when a step
-claims that it's ready.
-
 =back
+
+=end
 
 =head1 BUGS
 
@@ -472,7 +419,7 @@ stevan little, E<lt>stevan@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -29,14 +29,14 @@ has target => (
 sub do {
 	my ( $self, $c ) = @_;
 
-	my $wd = $c->workdir || $c->logger->logdie("No working directory provided");
+	my $wd = $c->workdir || $c->logger->log_and_die(level => "error", message => "No working directory provided");
 	my @args = @{ $c->additional_args || [] };
 
 	$self->create_poe_session(
 		c    => $c, 
 		cli  => [ $self->command, $self->script, @args ],
 		init => sub { chdir $wd },
-   	);
+	);
 }
 
 sub finished {
@@ -156,7 +156,7 @@ Yuval Kogman, E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2005, 2006 by Infinity Interactive, Inc.
+Copyright 2005-2008 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
